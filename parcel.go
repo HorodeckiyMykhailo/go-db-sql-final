@@ -22,12 +22,12 @@ func (s ParcelStore) Add(p Parcel) (int, error) {
 		sql.Named("created_at", p.CreatedAt))
 	if err != nil {
 		fmt.Println(err)
-		return 0, nil
+		return 0, err
 	}
 	int64result, err := res.LastInsertId()
 	if err != nil {
 		fmt.Println(err)
-		return 0, nil
+		return 0, err
 	}
 	var intResult int = int(int64result)
 	// верните идентификатор последней добавленной записи
@@ -43,7 +43,7 @@ func (s ParcelStore) Get(number int) (Parcel, error) {
 	err := row.Scan(&p.Number, &p.Client, &p.Status, &p.Address, &p.CreatedAt)
 	if err != nil {
 		fmt.Println(err)
-		return Parcel{}, nil
+		return Parcel{}, err
 	}
 
 	return p, nil
@@ -57,7 +57,7 @@ func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
 	rows, err := s.db.Query("SELECT number,client,status,address,created_at FROM parcel WHERE client = :client", sql.Named("client", client))
 	if err != nil {
 		fmt.Println(err)
-		return nil, nil
+		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -82,7 +82,7 @@ func (s ParcelStore) SetStatus(number int, status string) error {
 		sql.Named("number", number))
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return err
 	}
 	return nil
 }
@@ -96,7 +96,7 @@ func (s ParcelStore) SetAddress(number int, address string) error {
 		sql.Named("status", ParcelStatusRegistered))
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return err
 	}
 
 	return nil
@@ -110,7 +110,7 @@ func (s ParcelStore) Delete(number int) error {
 		sql.Named("status", ParcelStatusRegistered))
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return err
 	}
 
 	return nil
